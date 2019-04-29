@@ -1,0 +1,12 @@
+#ifndef GUI_H
+#define GUI_H
+#include <QObject>
+
+class gui: public QObject
+{
+    Q_OBJECT
+public:
+    gui();
+};
+
+#endif // GUI_H
