@@ -6,7 +6,6 @@ Process::Process(QString name, int id, int segments)
     this->id=id;
     this->segmentsCount=segments;
     segsListWidget=new QListWidget();
-//    segmentsList=new QList <Segment *> ();
 }
 
 
@@ -25,23 +24,35 @@ int Process::getNumberOfEnteredSegments()
 
 
 QString Process::getSegmentName(int segmentIndex){
+    std::list <Segment *>::iterator it=segmentsList.begin();
+    int i=0;
+    while (i<segmentIndex) {
+        it++;
+        i++;
+    }
     if (segmentIndex>=0 && segmentIndex<segmentsList.size())
-        return segmentsList[segmentIndex]->getName();
+        return (*it)->getName();
     return "";
 }
 
 
 int Process::getSegmentSize(QString segmentName){
-    for (int i=0;i<segmentsList.size();i++){
-        if (segmentsList[i]->getName()==segmentName)
-            return segmentsList[i]->getSize();
+    for (std::list<Segment *>::iterator i=segmentsList.begin();i!=segmentsList.end() ;i++){
+        if ((*i)->getName()==segmentName)
+            return (*i)->getSize();
     }
     return -1;
 }
 
 
 int Process::getSegmentSize(int segmentIndex){
-    return segmentsList[segmentIndex]->getSize();
+    std::list <Segment *>::iterator it=segmentsList.begin();
+    int i=0;
+    while (i<segmentIndex) {
+        it++;
+        i++;
+    }
+    return (*it)->getSize();
 }
 
 QListWidget *Process::getSegmentsListWidget()
@@ -58,7 +69,12 @@ void Process::setNewSegment(QString name, int size)
 void Process::addSegment()
 {
     newSeg=new Segment (newSegmentName,newSegmentSize);
-    segmentsList.append(newSeg);
+    segmentsList.push_back(newSeg);
     segsListWidget->addItem(newSeg->getName());
+}
+
+std::list<Segment *> &Process::getSegmentsList()
+{
+    return  segmentsList;
 }
 

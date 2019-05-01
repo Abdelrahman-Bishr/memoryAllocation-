@@ -14,9 +14,7 @@
 #include <QFormLayout>
 #include <QListWidget>
 #include <QList>
-#include "process.h"
-#include "hole.h"
-#include "segment.h"
+#include "allocator.h"
 
 class EntryUI: public QWidget
 {
@@ -28,14 +26,21 @@ private slots:
     void addProcess();
     void addSegment();
     void buttonClicked(ControlButtons * sourceButton);
-
+    void startAllocation();
+    void processSelected(QListWidgetItem* selectedProcess);
+    void holeSelected(QListWidgetItem* selectedHole);
+    void segmentSelected(QListWidgetItem* selectedSegment);
+    void popSegment();
+    void popHole();
+    void popProcess();
 private:
     void createItems();
     void setLabelTexts();
     void setInitialDisplay();
     void createLayouts();
     void signalsHandler();
-    void setAssociatedLists();
+
+    Allocator * memoryAllocator;
     QPushButton * startButton;
     QGroupBox * memoryDisplayGroup,*holesGroup,*processGroup,*segmentsGroup, *listingGroup;
     QLineEdit ** holesInput , **processInput;     //holesStart & size |||| process name , numSegments , sizeOfSegment , segmenName
@@ -47,11 +52,13 @@ private:
     QSpacerItem * verSpacer,* horSpacer;
     QListWidget * processesListWidget , * segmentsListWidget,*holesListWidget;
     ControlButtons ** actionButtons;
-    QList <Process *> processes;
-    QList <Hole *> holes;
+    std::list <Process *> processes;
+    std::list <Hole *> holes;
     Process * currentProcess;
     Process * newProcess;
+    Hole * currentHole;
     Hole * newHole;
+    Segment * currentSegment;
     int processID;
     int enteredSegments;
     int holeID;

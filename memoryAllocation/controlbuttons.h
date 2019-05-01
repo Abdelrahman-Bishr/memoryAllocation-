@@ -18,7 +18,7 @@ public:
     ControlButtons(QString text="New PushButton",QGroupBox *holdingBox=NULL);
     void setGroupBox(QGroupBox *holdingBox);
     void addQLineEdit(QLineEdit * newQLineEdit);
-    void setAssociatedList(QListWidget * associatedListWidget,QList <int> * associatedList);
+    void setAssociatedList(QListWidget * associatedListWidget,std::list <int> * associatedList);
 
 signals:
     void clickedSignal(ControlButtons * sourceButton);
@@ -26,7 +26,7 @@ public slots:
     void buttonClicked();
 private:
     QGroupBox * holdingBox;
-    QList <QLineEdit*> lineEdits;
+    std::list <QLineEdit*> lineEdits;
     QListWidget * associatedListWidget;
 };
 

@@ -17,14 +17,14 @@ public:
     QListWidget * getSegmentsListWidget();
     void setNewSegment(QString name,int size);
     void addSegment();
-
+    std::list<Segment *> &getSegmentsList();
 private:
     QString name;
     QString newSegmentName;
     int segmentsCount;
     int id;
     int newSegmentSize;
-    QList <Segment *> segmentsList;
+    std::list <Segment *> segmentsList;
     QListWidget * segsListWidget;
     Segment * newSeg;
 };

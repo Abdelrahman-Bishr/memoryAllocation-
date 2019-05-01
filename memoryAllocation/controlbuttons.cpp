@@ -18,10 +18,10 @@ void ControlButtons::setGroupBox(QGroupBox * holdingBox)
 
 void ControlButtons::addQLineEdit(QLineEdit *newQLineEdit)
 {
-    lineEdits.append(newQLineEdit);
+    lineEdits.push_back(newQLineEdit);
 }
 
-void ControlButtons::setAssociatedList(QListWidget * associatedListWidget, QList<int> *associatedList)
+void ControlButtons::setAssociatedList(QListWidget * associatedListWidget, std::list<int> *associatedList)
 {
     this->associatedListWidget=associatedListWidget;
 }
@@ -29,10 +29,9 @@ void ControlButtons::setAssociatedList(QListWidget * associatedListWidget, QList
 void ControlButtons::buttonClicked()
 {
     qDebug()<<this->text();
-    if(!lineEdits.empty()){
         qDebug()<<lineEdits.size();
-        for (int i=0;i<lineEdits.size();i++){
-            if (lineEdits[i]->text()==""){
+        for (std::list <QLineEdit *>::iterator i=lineEdits.begin() ;i!=lineEdits.end();i++){
+            if ((*i)->text()==""){
                 qDebug()<<"empty text";
                 return;
             }
@@ -41,13 +40,10 @@ void ControlButtons::buttonClicked()
             emit clickedSignal(this);
         }
         else if (this->text()=="Pop"){
-
+            emit clickedSignal(this);
         }
         else if (this->text()=="Cancel"){
-
+            emit clickedSignal(this);
         }
-
-    }
-
 
 }

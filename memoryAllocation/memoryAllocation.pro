@@ -32,7 +32,8 @@ SOURCES += \
     process.cpp \
     hole.cpp \
     segment.cpp \
-    allocator.cpp
+    allocator.cpp \
+    chart.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,7 +42,8 @@ HEADERS += \
     process.h \
     hole.h \
     segment.h \
-    allocator.h
+    allocator.h \
+    chart.h
 
 FORMS += \
         mainwindow.ui
