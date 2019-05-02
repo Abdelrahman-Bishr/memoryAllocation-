@@ -4,8 +4,7 @@
 #define buttonsNum 9
 
 EntryUI::EntryUI()
-{
-
+{    
     enteredSegments=0;
     holeID=0;
     processID=1;
@@ -215,6 +214,7 @@ void EntryUI::popHole()
             delete (*i);
             holes.erase(i);
             currentHole=nullptr;
+            qDebug()<<"                                                     holes count of EntryUI="<<holes.size();
             break;
         }
     }
@@ -272,7 +272,7 @@ void EntryUI::holeAllocated(Hole *allocatedHole)
             holesListWidget->hide();
             holesListWidget->setItemHidden(holesListWidget->item(j),true);
             holesListWidget->removeItemWidget(holesListWidget->item(j));
-            QString newName=allocatedHole->getName().split(" ")[0]+QString::number(allocatedHole->getStartAddress())+" : "+
+            QString newName=allocatedHole->getName().split(" ")[0]+"       "+QString::number(allocatedHole->getStartAddress())+" : "+
                     QString::number(allocatedHole->getStartAddress()+allocatedHole->getSize()-1);
             holesListWidget->insertItem(j,newName);
             allocatedHole->setName(newName);

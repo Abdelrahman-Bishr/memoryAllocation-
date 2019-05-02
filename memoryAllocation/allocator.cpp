@@ -10,11 +10,12 @@ Allocator::Allocator(std::list<Process *> &processes, std::list<Hole *> &holes)
 //            this->segments.push_back(*j);
 //        }
 //    }
-    joinHoles();
 }
 
 void Allocator::startAllocator(QString allocationMethod)
 {
+    qDebug()<<"starting allocator";
+    joinHoles();
     if (allocationMethod=="First Fit"){
         firstFit();
     }
@@ -58,16 +59,25 @@ void Allocator::joinHoles()
     holes.sort(holeStart);
     std::list<Hole * >::iterator j=holes.begin();
     j++;
+    QString dummyI;
+    QString dummyJ;
+    dummyJ=(*j)->getName();
     for (std::list<Hole * >::iterator i=holes.begin(); j!=holes.end() && i!=holes.end();i++){
+        dummyJ=(*j)->getName();
+        dummyI=(*i)->getName();
         if (((*j)->getStartAddress()-((*i)->getStartAddress()+(*i)->getSize()))==0){
-            qDebug()<<"found holes to join";
             (*i)->setNewAttributes((*i)->getSize()+(*j)->getSize(),(*i)->getStartAddress());
-            holes.erase(j);
-            delete *j;
-            *j=*i;
-            j++;
+            (*j)->setNewAttributes(0,(*j)->getStartAddress());
+            emit holeAllocated(*i);
+            emit holeAllocated(*j);
+            qDebug()<<"found holes to join";
+//            delete *j;
+//            holes.erase(j);
+//            j--;
+            qDebug()<<"                                         holes count of allocator="<<holes.size();
+            j--;
+            i--;
         }
-        if(j!=holes.end())
         j++;
     }
     holes.sort(largerHole);
