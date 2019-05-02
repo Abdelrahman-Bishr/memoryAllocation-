@@ -18,6 +18,11 @@ int Segment::getSize()
     return size;
 }
 
+int Segment::getResidingAddress()
+{
+    return residingAddress;
+}
+
 void Segment::setName(QString name)
 {
     this->name=name;
@@ -35,9 +40,9 @@ void Segment::allocate()
 
 void Segment::deallocate()
 {
-    residingAddress=-1;
     if (allocated==true)
-        emit deallocated(residingAddress);
+        emit deallocated(this);
+    residingAddress=-1;
     allocated=false;
 }
 

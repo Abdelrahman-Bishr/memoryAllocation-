@@ -1,7 +1,7 @@
 #ifndef ENTRYUI_H
 #define ENTRYUI_H
 #include <QDebug>
-
+#include <QKeyEvent>
 #include <QObject>
 #include <controlbuttons.h>
 #include <QGroupBox>
@@ -33,12 +33,16 @@ private slots:
     void popSegment();
     void popHole();
     void popProcess();
+    void holeAllocated(Hole * allocatedHole);
+    void segmentDeallocated(Segment * deallocatedSegment);
 private:
     void createItems();
+    void keyPressEvent (QKeyEvent * event);
     void setLabelTexts();
     void setInitialDisplay();
     void createLayouts();
     void signalsHandler();
+    void addNewHole(QString holeName,int startingAddress,int size);
 
     Allocator * memoryAllocator;
     QPushButton * startButton;

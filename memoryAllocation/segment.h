@@ -10,6 +10,7 @@ public:
     Segment(QString segName, int segSize);
     QString getName();
     int getSize();
+    int getResidingAddress();
     void setName(QString name);
     void setResidingAddress(int address);
     void allocate();
@@ -17,7 +18,7 @@ public:
     bool isAllocated();
 
 signals:
-    void deallocated (int startingAddress);
+    void deallocated (Segment * deallocatedSegment);
 private:
     QString name;
     int size;

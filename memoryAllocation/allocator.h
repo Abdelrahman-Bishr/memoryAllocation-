@@ -9,8 +9,9 @@
 #include <list>
 #include <algorithm>
 
-class Allocator
+class Allocator : public QObject
 {
+    Q_OBJECT
 public:
     Allocator(std::list <Process *> & processes , std::list <Hole *> & holes );
     void startAllocator(QString allocationMethod);
@@ -36,6 +37,9 @@ public:
         return false;
     }
 
+
+signals:
+    void holeAllocated(Hole * allocatedHole);
 private:
     std::list <Process *>  processes ;
     std::list <Hole *>  holes;

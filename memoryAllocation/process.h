@@ -4,8 +4,9 @@
 #include <QListWidget>
 #include "segment.h"
 
-class Process
+class Process : public QObject
 {
+    Q_OBJECT
 public:
     Process(QString name,int id,int segments=1);
     QString getName();
@@ -18,6 +19,11 @@ public:
     void setNewSegment(QString name,int size);
     void addSegment();
     std::list<Segment *> &getSegmentsList();
+
+signals:
+    void deallocated(Segment * deallocatedSegment);
+private slots:
+    void segmentDeallocated(Segment * deallocatedSegment);
 private:
     QString name;
     QString newSegmentName;
