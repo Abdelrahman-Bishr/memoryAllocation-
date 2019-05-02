@@ -18,7 +18,7 @@ public:
     QListWidget * getSegmentsListWidget();
     void setNewSegment(QString name,int size);
     void addSegment();
-    std::list<Segment *> &getSegmentsList();
+    std::list<Segment *> *getSegmentsList();
 
 signals:
     void deallocated(Segment * deallocatedSegment);
@@ -30,7 +30,7 @@ private:
     int segmentsCount;
     int id;
     int newSegmentSize;
-    std::list <Segment *> segmentsList;
+    std::list <Segment *> *segments;
     QListWidget * segsListWidget;
     Segment * newSeg;
 };

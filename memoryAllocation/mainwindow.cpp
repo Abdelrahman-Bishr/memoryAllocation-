@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     entry=new EntryUI();
     this->setCentralWidget(entry);
+    this->setObjectName("Memory Allocation Simulator");
+    this->setWindowTitle("Memory Allocation Simulator");
 }
 
 MainWindow::~MainWindow()

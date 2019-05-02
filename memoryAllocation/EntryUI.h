@@ -1,8 +1,7 @@
 #ifndef ENTRYUI_H
 #define ENTRYUI_H
-#include <QDebug>
 #include <QKeyEvent>
-#include <QObject>
+//#include <QObject>
 #include <controlbuttons.h>
 #include <QGroupBox>
 #include <QComboBox>
@@ -33,8 +32,9 @@ private slots:
     void popSegment();
     void popHole();
     void popProcess();
-    void holeAllocated(Hole * allocatedHole);
+    bool holeAllocated(Hole * allocatedHole);
     void segmentDeallocated(Segment * deallocatedSegment);
+    void removeHoleFromListWidget(QString holeName);
 private:
     void createItems();
     void keyPressEvent (QKeyEvent * event);
@@ -44,6 +44,7 @@ private:
     void signalsHandler();
     void addNewHole(QString holeName,int startingAddress,int size);
 
+    int memorySize;
     Allocator * memoryAllocator;
     QPushButton * startButton;
     QGroupBox * memoryDisplayGroup,*holesGroup,*processGroup,*segmentsGroup, *listingGroup;
@@ -56,8 +57,8 @@ private:
     QSpacerItem * verSpacer,* horSpacer;
     QListWidget * processesListWidget , * segmentsListWidget,*holesListWidget;
     ControlButtons ** actionButtons;
-    std::list <Process *> processes;
-    std::list <Hole *> holes;
+    std::list <Process *> *processes;
+    std::list <Hole *> *holes;
     Process * currentProcess;
     Process * newProcess;
     Hole * currentHole;

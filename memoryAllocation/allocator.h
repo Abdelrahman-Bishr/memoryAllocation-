@@ -13,7 +13,7 @@ class Allocator : public QObject
 {
     Q_OBJECT
 public:
-    Allocator(std::list <Process *> & processes , std::list <Hole *> & holes );
+    Allocator(std::list <Process *> *processes , std::list <Hole *> *holes );
     void startAllocator(QString allocationMethod);
     void firstFit();
     void bestFit();
@@ -39,11 +39,12 @@ public:
 
 
 signals:
-    void holeAllocated(Hole * allocatedHole);
+    bool holeAllocated(Hole * allocatedHole);
+    void holeEaten(QString holeName);
 private:
-    std::list <Process *>  processes ;
-    std::list <Hole *>  holes;
-    std::list <Segment *> segments;
+    std::list <Process *>  *processes ;
+    std::list <Hole *>  *holes;
+    std::list <Segment *> *segments;
 };
 
 #endif // ALLOCATOR_H

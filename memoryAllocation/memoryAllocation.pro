@@ -33,7 +33,8 @@ SOURCES += \
     hole.cpp \
     segment.cpp \
     allocator.cpp \
-    chart.cpp
+    chart.cpp \
+    memoryblock.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     hole.h \
     segment.h \
     allocator.h \
-    chart.h
+    chart.h \
+    memoryblock.h
 
 FORMS += \
         mainwindow.ui

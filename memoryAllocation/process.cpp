@@ -5,6 +5,7 @@ Process::Process(QString name, int id, int segments)
     this->name=name;
     this->id=id;
     this->segmentsCount=segments;
+    this->segments=new std::list<Segment *> ();
     segsListWidget=new QListWidget();
 }
 
@@ -19,25 +20,25 @@ int Process::getNumberOfSegments(){
 
 int Process::getNumberOfEnteredSegments()
 {
-    return segmentsList.size();
+    return segments->size();
 }
 
 
 QString Process::getSegmentName(int segmentIndex){
-    std::list <Segment *>::iterator it=segmentsList.begin();
+    std::list <Segment *>::iterator it=segments->begin();
     int i=0;
     while (i<segmentIndex) {
         it++;
         i++;
     }
-    if (segmentIndex>=0 && segmentIndex<segmentsList.size())
+    if (segmentIndex>=0 && segmentIndex<segments->size())
         return (*it)->getName();
     return "";
 }
 
 
 int Process::getSegmentSize(QString segmentName){
-    for (std::list<Segment *>::iterator i=segmentsList.begin();i!=segmentsList.end() ;i++){
+    for (std::list<Segment *>::iterator i=segments->begin();i!=segments->end() ;i++){
         if ((*i)->getName()==segmentName)
             return (*i)->getSize();
     }
@@ -46,7 +47,7 @@ int Process::getSegmentSize(QString segmentName){
 
 
 int Process::getSegmentSize(int segmentIndex){
-    std::list <Segment *>::iterator it=segmentsList.begin();
+    std::list <Segment *>::iterator it=segments->begin();
     int i=0;
     while (i<segmentIndex) {
         it++;
@@ -69,14 +70,14 @@ void Process::setNewSegment(QString name, int size)
 void Process::addSegment()
 {
     newSeg=new Segment (this->name+"::"+newSegmentName,newSegmentSize);
-    segmentsList.push_back(newSeg);
+    segments->push_back(newSeg);
     segsListWidget->addItem(newSeg->getName());
     connect(newSeg,SIGNAL(deallocated(Segment*)),this,SLOT(segmentDeallocated(Segment*)));
 }
 
-std::list<Segment *> &Process::getSegmentsList()
+std::list<Segment *> *Process::getSegmentsList()
 {
-    return  segmentsList;
+    return  segments;
 }
 
 void Process::segmentDeallocated(Segment *deallocatedSegment)
