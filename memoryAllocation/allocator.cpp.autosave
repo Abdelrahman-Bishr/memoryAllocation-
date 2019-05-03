@@ -126,13 +126,13 @@ void Allocator::bestFit(){
     for (std::list<Hole * >::iterator i=holes->begin(); i!=holes->end();i++){
         qDebug()<<(*i)->getName()<<"    "<<(*i)->getSize();
     }
-    Hole * xHole;
+    QString xHole;
     for (std::list<Hole * >::iterator i=holes->begin(); i!=holes->end();i++){
         qDebug()<<"holes size is "<<holes->size();
-        xHole=*i;
+        xHole=(*i)->getName();
         for (std::list<Segment * >::reverse_iterator j=segments->rbegin(); j!=segments->rend();j++){
             if(i!=holes->end()){
-                xHole=*i;
+                xHole=(*i)->getName();
                 if ((*j)->isAllocated())
                     continue;
                 else if((*i)->getSize()>=(*j)->getSize()){

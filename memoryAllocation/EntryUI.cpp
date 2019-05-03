@@ -5,6 +5,7 @@
 
 EntryUI::EntryUI()
 {    
+
     processes= new std::list<Process *> ();
     holes= new std::list<Hole *> ();
     enteredSegments=0;
@@ -28,8 +29,8 @@ EntryUI::EntryUI()
 void EntryUI::addHole()
 {
 
-    if (memoryAllocator!=nullptr)
-        return;
+//    if (memoryAllocator!=nullptr)
+//        return;
     if (holesInput[0]->text()=="" || holesInput[1]->text()=="")
         return;
     if (holesInput[1]->text().toInt()<=0)
@@ -46,6 +47,10 @@ void EntryUI::addHole()
 //    qDebug()<<"Adding Hole";
     QString holeName="Hole"+QString::number(holeID)+"       "+holesInput[0]->text()+" : "+QString::number( holesInput[0]->text().toInt()+holesInput[1]->text().toInt()-1);
     addNewHole(holeName,holesInput[0]->text().toInt(),holesInput[1]->text().toInt());
+//    if (memoryAllocator!=nullptr){
+//        memoryAllocator->joinHoles();
+//        memoryAllocator->drawGraph();
+//    }
 }
 
 void EntryUI::addProcess()
@@ -71,6 +76,10 @@ void EntryUI::addProcess()
         connect(currentProcess->getSegmentsListWidget(),SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(segmentSelected(QListWidgetItem*)));
         connect(currentProcess,SIGNAL(deallocated(Segment *)),this,SLOT(segmentDeallocated(Segment *)));
     }
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
+        memoryAllocator->drawGraph();
+    }
 }
 void EntryUI::addSegment()
 {    
@@ -92,6 +101,10 @@ void EntryUI::addSegment()
             currentProcess->addSegment();
 
         }
+    }
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
+        memoryAllocator->drawGraph();
     }
 }
 
@@ -119,6 +132,7 @@ void EntryUI::startAllocation()
         delete memoryAllocator;
 //    qDebug()<<"creating allocator";
     memoryAllocator=new Allocator (processes,holes);
+    memoryAllocator->setChartWidget(memoryLayout);
     connect(memoryAllocator,SIGNAL(holeAllocated(Hole *)),this,SLOT(holeAllocated(Hole *)));
     connect(memoryAllocator,SIGNAL(holeEaten(QString)),this,SLOT(removeHoleFromListWidget(QString)));
     memoryAllocator->startAllocator(fittingMethod->currentText());
@@ -202,6 +216,10 @@ void EntryUI::popSegment()
             break;
         }
     }
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
+        memoryAllocator->drawGraph();
+    }
 }
 
 
@@ -227,6 +245,10 @@ void EntryUI::popHole()
             currentHole=nullptr;
             break;
         }
+    }
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
+        memoryAllocator->drawGraph();
     }
 }
 
@@ -267,6 +289,10 @@ void EntryUI::popProcess()
         memoryAllocator->joinHoles();
     currentProcess=*processes->begin();
     processSelected(processesListWidget->item(0));
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
+        memoryAllocator->drawGraph();
+    }
 }
 
 bool EntryUI::holeAllocated(Hole *allocatedHole)
@@ -412,7 +438,7 @@ void EntryUI::setInitialDisplay()
 {
     this->setLayout(windowLayout);
     windowLayout->addLayout(entryLayout);
-
+    memoryDisplayGroup->setLayout(memoryLayout);
     windowLayout->addWidget(listingGroup);
     windowLayout->addWidget(memoryDisplayGroup);
     listingGroup->setLayout(displayListLayout);
@@ -464,7 +490,8 @@ void EntryUI::createLayouts()
     processInputLayout=new QFormLayout();
     verSpacer=new QSpacerItem(1,1,QSizePolicy::Minimum,QSizePolicy::Expanding);
     horSpacer=new QSpacerItem(1,1,QSizePolicy::Expanding,QSizePolicy::Minimum);
-
+    memoryLayout=new QVBoxLayout();
+    memoryLayout->setSizeConstraint(memoryLayout->SetMinimumSize);
 }
 
 void EntryUI::signalsHandler()
@@ -485,5 +512,8 @@ void EntryUI::addNewHole(QString holeName, int startingAddress, int size)
     holes->push_back(newHole);
     holesListWidget->addItem(holeName);
     holeID++;
-
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
+        memoryAllocator->drawGraph();
+    }
 }

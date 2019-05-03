@@ -3,23 +3,26 @@
 #include "hole.h"
 #include "process.h"
 #include "segment.h"
+#include "chart.h"
 #include <bits/stdc++.h>
 #include <stdio.h>
 #include <QDebug>
 #include <list>
 #include <algorithm>
-
+#include <QGroupBox>
+#include <QVBoxLayout>
 class Allocator : public QObject
 {
     Q_OBJECT
 public:
-    Allocator(std::list <Process *> *processes , std::list <Hole *> *holes );
+    Allocator(std::list <Process *> *processes , std::list <Hole *> *holes ,int memorySize=2000);
     void startAllocator(QString allocationMethod);
     void firstFit();
     void bestFit();
     void worstFit();
     void joinHoles();
-
+    void setChartWidget (QVBoxLayout * memoryGroupBoxLayout);
+    void drawGraph();
     static bool largerHole(Hole * hole1 , Hole * hole2 ){
         if (hole1->getSize()<hole2->getSize())
             return true;
@@ -36,6 +39,11 @@ public:
             return true;
         return false;
     }
+    static bool segmentStart(Segment * segment1 , Segment * segment2 ){
+        if (segment1->getResidingAddress()<segment2->getResidingAddress())
+            return true;
+        return false;
+    }
 
 
 signals:
@@ -45,6 +53,8 @@ private:
     std::list <Process *>  *processes ;
     std::list <Hole *>  *holes;
     std::list <Segment *> *segments;
+    Chart * memoryGraph;
+    QVBoxLayout * memoryDisplayLayout;
 };
 
 #endif // ALLOCATOR_H

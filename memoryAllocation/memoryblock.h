@@ -3,25 +3,35 @@
 #include <QGraphicsRectItem>
 #include <QLabel>
 #include "hole.h"
-
-class MemoryBlock : public QRect
+#include <QGraphicsSimpleTextItem>
+#include <QGraphicsView>
+#include <QDebug>
+#include <math.h>
+class MemoryBlock : public QGraphicsRectItem
 {
 public:
-    MemoryBlock(QWidget * parent ,int state);                               //0 for hole , 1 for segment , 2 for being occupied by something else (not a user input )
-    MemoryBlock(QWidget * parent,Hole * hole);                              //state 0
-    MemoryBlock(QWidget * parent,Segment * allocatedSegment);               //state 1
-    MemoryBlock(QWidget * parent);                                          //state 2
+    MemoryBlock(QGraphicsItem * parent,Hole * hole);                              //state 0
+    MemoryBlock(QGraphicsItem * parent,Segment * allocatedSegment);               //state 1
+    MemoryBlock(QGraphicsItem * parent , int startAddress , int size);            //state 2
+    ~MemoryBlock();
     void setSize(int length);
     void setStartAddress(int startAddress);
+    void setName(QString name);
+    void allocate(Segment * allocatedSegment);
+    void deallocate(Hole * deallocatedHole);
     void changeAttributes(int state,int length,int startAddress);
+    void setNewY(int y);
+    void setHeight(int height);
     int getLength();
     int getStartAddress();
     int getState();
-
+    QString getName();
 private:
-    int currentState;
-    int startAddress;
-    int length;
+    void positionLabels();
+    int currentState,startAddress,length;
+    QGraphicsSimpleTextItem * addressLabel, * blockName;
+    QBrush * brush;
+
 };
 
 #endif // MEMORYBLOCK_H

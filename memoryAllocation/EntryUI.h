@@ -44,6 +44,7 @@ private:
     void signalsHandler();
     void addNewHole(QString holeName,int startingAddress,int size);
 
+    QVBoxLayout * memoryLayout;
     int memorySize;
     Allocator * memoryAllocator;
     QPushButton * startButton;
