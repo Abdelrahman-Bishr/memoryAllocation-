@@ -49,8 +49,11 @@ public:
 signals:
     bool holeAllocated(Hole * allocatedHole);
     void holeEaten(QString holeName);
+    std::list <Hole *>  *setHoles();
+    std::list <Process *> *setProcesses();
 private:
     std::list <Process *>  *processes ;
+    void setSegments();
     std::list <Hole *>  *holes;
     std::list <Segment *> *segments;
     Chart * memoryGraph;

@@ -14,6 +14,7 @@
 #include <QListWidget>
 #include <QList>
 #include "allocator.h"
+#include <QInputDialog>
 
 class EntryUI: public QWidget
 {
@@ -30,11 +31,14 @@ private slots:
     void holeSelected(QListWidgetItem* selectedHole);
     void segmentSelected(QListWidgetItem* selectedSegment);
     void popSegment();
-    void popHole();
+    void setMemorySize(QString sizeText);
+    std::list <Hole *>::iterator popHole();
     void popProcess();
     bool holeAllocated(Hole * allocatedHole);
     void segmentDeallocated(Segment * deallocatedSegment);
     void removeHoleFromListWidget(QString holeName);
+    std::list <Process *> * getProcesses();
+    std::list <Hole *> * getHoles();
 private:
     void createItems();
     void keyPressEvent (QKeyEvent * event);
@@ -44,6 +48,7 @@ private:
     void signalsHandler();
     void addNewHole(QString holeName,int startingAddress,int size);
 
+    QInputDialog * memorySizeInput;
     QVBoxLayout * memoryLayout;
     int memorySize;
     Allocator * memoryAllocator;
@@ -68,6 +73,7 @@ private:
     int processID;
     int enteredSegments;
     int holeID;
+    QString allocationMethod;
 
 };
 

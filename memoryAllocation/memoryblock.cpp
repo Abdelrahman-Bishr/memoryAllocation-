@@ -7,12 +7,15 @@ MemoryBlock::MemoryBlock(QGraphicsItem * parent,Hole * hole)
     this->setParentItem(parent);
     this->setRect(memoryX,10,widthOfBlock,80);
     addressLabel=new QGraphicsSimpleTextItem(this);
+    qDebug()<<"memoryBlock 10 :: holeName "<<hole->getName();
     blockName=new QGraphicsSimpleTextItem(hole->getName(),this);
     currentState=0;
     setSize(hole->getSize());
     setStartAddress(hole->getStartAddress());
     positionLabels();
     this->setBrush(Qt::green);
+    addressLabel->setBrush(Qt::red);
+    blockName->setBrush(Qt::red);
     qDebug()<<"memory bolck 0";
 }
 
@@ -32,6 +35,8 @@ MemoryBlock::MemoryBlock(QGraphicsItem * parent,Segment * allocatedSegment){
     setStartAddress(allocatedSegment->getResidingAddress());
     positionLabels();
     this->setBrush(Qt::red);
+    addressLabel->setBrush(Qt::green);
+    blockName->setBrush(Qt::green);
     qDebug()<<"memory bolck 1";
 }
 
@@ -40,12 +45,14 @@ MemoryBlock::MemoryBlock(QGraphicsItem *parent, int startAddress , int size)
     this->setParentItem(parent);
     this->setRect(memoryX,10,widthOfBlock,80);
     addressLabel=new QGraphicsSimpleTextItem("Address Label",this);
-    blockName=new QGraphicsSimpleTextItem("Block Name",this);
+    blockName=new QGraphicsSimpleTextItem("occupied , size="+QString::number(size),this);
     currentState=2;
     setSize(size);
     setStartAddress(startAddress);
     this->setBrush(Qt::gray);
     positionLabels();
+    addressLabel->setBrush(Qt::white);
+    blockName->setBrush(Qt::white);
 //    qDebug()<<this->boundingRect().x()<<this->boundingRect().y()<<this->boundingRect().height();
 }
 

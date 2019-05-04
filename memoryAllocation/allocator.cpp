@@ -9,12 +9,7 @@ Allocator::Allocator(std::list<Process *> *processes, std::list<Hole *> *holes, 
     memoryDisplayLayout=nullptr;
     this->holes=holes;
     this->processes=processes;
-    for (std::list <Process *>::iterator i=processes->begin();i!=processes->end();i++ ){
-            for (std::list <Segment *>::iterator j=(*i)->getSegmentsList()->begin() ; j!=(*i)->getSegmentsList()->end() ; j++){
-                (*j)->setName((*j)->getName());
-                this->segments->push_back(*j);
-            }
-    }
+    setSegments();
 
 }
 
@@ -38,11 +33,30 @@ void Allocator::startAllocator(QString allocationMethod)
 
 void Allocator::firstFit(){
     qDebug()<<"first fit allocation";
+    setSegments();
+    holes->sort(holeStart);
     for (std::list<Hole * >::iterator i=holes->begin(); i!=holes->end();i++){
         for (std::list<Segment * >::iterator j=segments->begin(); j!=segments->end();j++){
-            if((*i)->getSize()>=(*j)->getSize()){
-                (*i)->allocate(*j);
+            if(i!=holes->end()){
+                if ((*j)->isAllocated())
+                    continue;
+                else if((*i)->getSize()>=(*j)->getSize()){
+                    (*i)->allocate(*j);
+                    if(emit holeAllocated(*i)){
+                        qDebug()<<"popped hole , breaking to get a new one or end";
+                        if(i!=holes->begin())
+                            i--;
+                        break;
+                    }
+                    else {
+                        qDebug()<<"existing hole with name="+(*i)->getName();
+                    }
+                }
             }
+            else {
+                break;
+            }
+
         }
     }
 
@@ -64,6 +78,9 @@ void Allocator::worstFit(){
 
 void Allocator::joinHoles()
 {
+    holes=emit setHoles();
+    processes=emit setProcesses();
+    setSegments();
     holes->sort(holeStart);
     if(holes->size()<=1)
         return;
@@ -73,24 +90,22 @@ void Allocator::joinHoles()
     QString dummyJ;
     dummyJ=(*j)->getName();
 //    qDebug()<<"                                         holes initial count of allocator="<<holes->size();
-
+    std::list<Hole * >::iterator dummyIterator;
     for (std::list<Hole * >::iterator i=holes->begin(); j!=holes->end() && i!=holes->end();i++){
+        qDebug()<<"holes size is"<<holes->size();
         dummyJ=(*j)->getName();
         dummyI=(*i)->getName();
         if (((*j)->getStartAddress()-((*i)->getStartAddress()+(*i)->getSize()))==0){
             (*i)->setNewAttributes((*i)->getSize()+(*j)->getSize(),(*i)->getStartAddress());
             (*j)->setNewAttributes(0,(*j)->getStartAddress());
-            emit holeAllocated(*i);
-            emit holeEaten((*j)->getName());
-//            qDebug()<<"found holes to join";
-            delete *j;
-            holes->erase(j);
-//            if(i!=holes->begin())
-                i--;
-//            if(j!=holes->begin())
+            if(emit holeAllocated(*i)){
+                qDebug()<<"i popped , holes size is "<<holes->size();
+            }
+
+            if(emit holeAllocated(*j)){
                 j--;
-//            qDebug()<<"                                         holes count of allocator="<<holes->size();
-//            dummyJ=(*j)->getName();
+                qDebug()<<"J popped , holes size is "<<holes->size();
+            }
         }
         j++;
     }
@@ -105,6 +120,10 @@ void Allocator::setChartWidget(QVBoxLayout *memoryGroupBoxLayout)
 
 void Allocator::drawGraph()
 {
+    qDebug()<<"in drawGraph";
+    holes=emit setHoles();
+    processes=emit setProcesses();
+    setSegments();
     holes->sort(holeStart);
     segments->sort(segmentStart);
     memoryGraph->setHoles(holes);
@@ -116,23 +135,38 @@ void Allocator::drawGraph()
     memoryGraph->startGraphing();
 }
 
+void Allocator::setSegments()
+{
+    segments->clear();
+    for (std::list <Process *>::iterator i=processes->begin();i!=processes->end();i++ ){
+        qDebug()<<"processes count in allocator="<<processes->size();
+            for (std::list <Segment *>::iterator j=(*i)->getSegmentsList()->begin() ; j!=(*i)->getSegmentsList()->end() ; j++){
+                this->segments->push_back(*j);
+                qDebug()<<"segments count in allocator="<<segments->size();
+                qDebug()<<"segments count in allocator of EntryUI="<<(*i)->getSegmentsList()->size();
+            }
+    }
+}
+
 
 void Allocator::bestFit(){
     qDebug()<<"best fit allocation";
     segments->sort(largerSegment);
     holes->sort(largerHole);
 
+    qDebug()<<"holes count in allocator="<<holes->size();
 
     for (std::list<Hole * >::iterator i=holes->begin(); i!=holes->end();i++){
         qDebug()<<(*i)->getName()<<"    "<<(*i)->getSize();
     }
-    Hole * xHole;
+
+    QString xHole;
     for (std::list<Hole * >::iterator i=holes->begin(); i!=holes->end();i++){
         qDebug()<<"holes size is "<<holes->size();
-        xHole=*i;
+        xHole=(*i)->getName();
         for (std::list<Segment * >::reverse_iterator j=segments->rbegin(); j!=segments->rend();j++){
             if(i!=holes->end()){
-                xHole=*i;
+                xHole=(*i)->getName();
                 if ((*j)->isAllocated())
                     continue;
                 else if((*i)->getSize()>=(*j)->getSize()){
