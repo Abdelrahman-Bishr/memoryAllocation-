@@ -22,7 +22,7 @@ MemoryBlock::MemoryBlock(QGraphicsItem * parent,Hole * hole)
 MemoryBlock::MemoryBlock(QGraphicsItem * parent,Segment * allocatedSegment){
 
     if (allocatedSegment->getResidingAddress()<0){
-        qDebug()<<"memory block allocated wrongly to an unallocated segment";
+//        qDebug()<<"memory block allocated wrongly to an unallocated segment";
     //        delete this;
         return;
     }

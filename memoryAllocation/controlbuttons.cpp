@@ -28,11 +28,11 @@ void ControlButtons::setAssociatedList(QListWidget * associatedListWidget, std::
 
 void ControlButtons::buttonClicked()
 {
-    qDebug()<<this->text();
-        qDebug()<<lineEdits.size();
+//    qDebug()<<this->text();
+//        qDebug()<<lineEdits.size();
         for (std::list <QLineEdit *>::iterator i=lineEdits.begin() ;i!=lineEdits.end();i++){
             if ((*i)->text()==""){
-                qDebug()<<"empty text";
+//                qDebug()<<"empty text";
                 return;
             }
         }

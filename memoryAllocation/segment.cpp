@@ -40,12 +40,13 @@ void Segment::allocate()
 
 void Segment::deallocate()
 {
-    if (allocated==true)
+    if (allocated==true){
+//        allocated=false;
         emit deallocated(this);
-    residingAddress=-1;
+    }
     allocated=false;
+    residingAddress=-1;
 }
-
 bool Segment::isAllocated()
 {
     return allocated;

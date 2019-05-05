@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <QGroupBox>
 #include <QVBoxLayout>
+#include <QMessageBox>
+
+
 class Allocator : public QObject
 {
     Q_OBJECT
@@ -58,6 +61,8 @@ private:
     std::list <Segment *> *segments;
     Chart * memoryGraph;
     QVBoxLayout * memoryDisplayLayout;
+    QMessageBox * messageUser;
+
 };
 
 #endif // ALLOCATOR_H

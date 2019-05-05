@@ -42,13 +42,15 @@ void EntryUI::addHole()
         if ((holesInput[0]->text().toInt() >= (*i)->getStartAddress() && holesInput[0]->text().toInt() < (*i)->getStartAddress()+ (*i)->getSize())  ||
                 ((holesInput[0]->text().toInt()+holesInput[1]->text().toInt()) > (*i)->getStartAddress() &&
                  (holesInput[0]->text().toInt()+holesInput[1]->text().toInt()) <=  (*i)->getStartAddress()+ (*i)->getSize()) ){
-            qDebug()<<"interlapping holes";
+            messageUser->setText("interlapping holes");
+            messageUser->show();
             return;
         }
     }
     QString holeName="Hole"+QString::number(holeID)+"       "+holesInput[0]->text()+" : "+QString::number( holesInput[0]->text().toInt()+holesInput[1]->text().toInt()-1);
     addNewHole(holeName,holesInput[0]->text().toInt(),holesInput[1]->text().toInt());
     if (memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
         memoryAllocator->drawGraph();
     }
 }
@@ -65,7 +67,8 @@ void EntryUI::addProcess()
 
     for (std::list <Process *>::iterator i=processes->begin() ;i!=processes->end();i++){
         if(processInput[0]->text()==(*i)->getName()){
-            qDebug()<<"process Enterted before";
+            messageUser->setText("process enterted before");
+            messageUser->show();
             return ;
         }
     }
@@ -99,20 +102,137 @@ void EntryUI::addSegment()
         return;
     for (int i=0;i<currentProcess->getNumberOfEnteredSegments();i++){
         if (currentProcess->getName()+"::"+processInput[2]->text()==currentProcess->getSegmentName(i)){
-            qDebug()<<"segment already Enterd";
+            messageUser->setText("segment already enterd before");
+            messageUser->show();
             return ;
         }
     }
     if(currentProcess->getNumberOfEnteredSegments()<currentProcess->getNumberOfSegments()){
         if(currentProcess!=nullptr){
             enteredSegments++;
-            currentProcess->setNewSegment(processInput[2]->text() , processInput[3]->text().toInt());
+            currentProcess->setNewSegment(processInput[2]->text()+"     "+processInput[3]->text() , processInput[3]->text().toInt());
             currentProcess->addSegment();
-
         }
     }
 //    adding segment has nothing to do with allocator , allocating or deallocating it is what is relevant to allocator
 }
+
+
+std::list <Hole *>::iterator EntryUI::popHole()
+{
+    if(currentHole==nullptr){
+        messageUser->setText("Select a hole first");
+        messageUser->show();
+        return holes->end();
+    }
+//    qDebug()<<"popping hole in EntryUI";
+    for (std::list<Hole *>::iterator i=holes->begin();i!=holes->end();i++){
+        if(currentHole==(*i)){
+//remove hole from display
+            for (int j=0;j<holesListWidget->count();j++){
+                if(holesListWidget->item(j)->text()==currentHole->getName()){
+//                    qDebug()<<"removing from holes list widget hole "<<currentHole->getName();
+                    holesListWidget->setItemHidden(holesListWidget->item(j),true);
+                    holesListWidget->removeItemWidget(holesListWidget->item(j));
+                    break;
+                }
+            }
+//remove hole from holes list
+            delete (*i);
+//            holes->erase(i);
+            currentHole=nullptr;
+            return i;
+        }
+    }
+    return holes->end();
+}
+
+
+
+void EntryUI::popProcess()
+{
+    if(currentProcess==nullptr)
+        return ;
+    for (std::list <Process *>::iterator j=processes->begin(); j!=processes->end();j++){
+        if((*j)==currentProcess){                                                                   //find the required process to be popped
+//            qDebug()<<"process to be removed :: "<<(*j)->getName();
+            segmentsListWidget=currentProcess->getSegmentsListWidget();
+//            int k=0;
+            for (std::list<Segment *>::iterator i=(*j)->getSegmentsList()->begin();i!=(*j)->getSegmentsList()->end();i++){      //pop its segments one by one
+                currentSegment=*i;
+                popSegment();
+                i--;
+//                (*i)->deallocate();
+//                segmentsListWidget->setItemHidden(segmentsListWidget->item(k),true);
+//                segmentsListWidget->removeItemWidget(segmentsListWidget->item(k));
+//                delete (*i);
+//                k++;
+            }
+            for (int i=0;i<processesListWidget->count();i++){
+                if(processesListWidget->item(i)->text()==currentProcess->getName()){
+//                    qDebug()<<"process label to be removed from list is "<<processesListWidget->item(i)->text();
+                    processesListWidget->setItemHidden(processesListWidget->item(i),true);
+                    processesListWidget->removeItemWidget(processesListWidget->item(i));
+                    break;
+                }
+            }
+
+            (*j)->getSegmentsList()->clear();
+            delete (*j);
+            processes->erase(j);
+
+            break;
+        }
+    }
+
+    currentProcess=*processes->begin();
+    processSelected(processesListWidget->item(0));
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->drawGraph();
+    }
+}
+
+
+void EntryUI::popSegment()
+{
+//    qDebug()<<"trying to pop a Segment";
+    if(currentSegment==nullptr || currentProcess==nullptr){
+    if(currentSegment==nullptr ){
+        messageUser->setText("You must select a segment");
+        messageUser->show();
+    }
+    else if(currentProcess==nullptr ){
+        messageUser->setText("You must select a process");
+        messageUser->show();
+    }
+        return ;
+    }
+//    qDebug()<<"popping segment";
+    for (std::list<Segment *>::iterator i=currentProcess->getSegmentsList()->begin();i!=currentProcess->getSegmentsList()->end();i++){
+        if (currentSegment==(*i)){
+            for (int j=0;j<segmentsListWidget->count();j++){
+                if(segmentsListWidget->item(j)->text()==currentSegment->getName()){
+                    segmentsListWidget->setItemHidden(segmentsListWidget->item(j),true);
+                    segmentsListWidget->removeItemWidget(segmentsListWidget->item(j));
+//                    qDebug()<<"segment popping from list confirmed";
+                    break;
+                }
+            }
+//            qDebug()<<"segment popping confirmed";
+            currentSegment->deallocate();
+            if (memoryAllocator!=nullptr)
+                memoryAllocator->joinHoles();
+            delete (*i);
+            currentProcess->getSegmentsList()->erase(i);
+            currentSegment=nullptr;
+            break;
+        }
+    }
+//    if (memoryAllocator!=nullptr){
+//        memoryAllocator->drawGraph();
+//    }
+}
+
 
 void EntryUI::buttonClicked(ControlButtons *sourceButton)
 {
@@ -134,9 +254,12 @@ void EntryUI::buttonClicked(ControlButtons *sourceButton)
     else if (sourceButton==actionButtons[4]){
         popProcess();
     }
-    else if (sourceButton==actionButtons[7])
+    else if (sourceButton==actionButtons[7]){
         popSegment();
-
+        if (memoryAllocator!=nullptr){
+            memoryAllocator->drawGraph();
+        }
+    }
 }
 
 void EntryUI::startAllocation()
@@ -195,116 +318,14 @@ void EntryUI::segmentSelected(QListWidgetItem *selectedSegment)
     }
 }
 
-void EntryUI::popSegment()
-{
-    qDebug()<<"trying to pop a Segment";
-    if(currentSegment==nullptr || currentProcess==nullptr){
-    if(currentSegment==nullptr ){
-        qDebug()<<"null currentSegment";
-    }
-    else if(currentProcess==nullptr ){
-        qDebug()<<"null currentProcess";
-    }
-        return ;
-    }
-    qDebug()<<"popping segment";
-    for (std::list<Segment *>::iterator i=currentProcess->getSegmentsList()->begin();i!=currentProcess->getSegmentsList()->end();i++){
-        if (currentSegment==(*i)){
-            for (int j=0;j<segmentsListWidget->count();j++){
-                if(segmentsListWidget->item(j)->text()==currentSegment->getName()){
-                    segmentsListWidget->setItemHidden(segmentsListWidget->item(j),true);
-                    segmentsListWidget->removeItemWidget(segmentsListWidget->item(j));
-//                    qDebug()<<"segment popping from list confirmed";
-                    break;
-                }
-            }
-            qDebug()<<"segment popping confirmed";
-            currentSegment->deallocate();
-            if (memoryAllocator!=nullptr)
-                memoryAllocator->joinHoles();
-            delete (*i);
-            currentProcess->getSegmentsList()->erase(i);
-            currentSegment=nullptr;
-            break;
-        }
-    }
-    if (memoryAllocator!=nullptr){
-        memoryAllocator->drawGraph();
-    }
-}
-
 void EntryUI::setMemorySize(QString sizeText)
 {
     memorySize=sizeText.toInt();
 }
 
-
-std::list <Hole *>::iterator EntryUI::popHole()
-{
-    if(currentHole==nullptr)
-        return holes->end();
-    qDebug()<<"popping hole in EntryUI";
-    for (std::list<Hole *>::iterator i=holes->begin();i!=holes->end();i++){
-        if(currentHole==(*i)){
-//remove hole from display
-            for (int j=0;j<holesListWidget->count();j++){
-                if(holesListWidget->item(j)->text()==currentHole->getName()){
-                    qDebug()<<"removing from holes list widget hole "<<currentHole->getName();
-                    holesListWidget->setItemHidden(holesListWidget->item(j),true);
-                    holesListWidget->removeItemWidget(holesListWidget->item(j));
-                    break;
-                }
-            }
-//remove hole from holes list
-            delete (*i);
-//            holes->erase(i);
-            currentHole=nullptr;
-            return i;
-        }
-    }
-    return holes->end();
-}
-
-void EntryUI::popProcess()
-{
-    if(currentProcess==nullptr)
-        return ;
-    for (std::list <Process *>::iterator j=processes->begin(); j!=processes->end();j++){
-        if((*j)==currentProcess){
-            qDebug()<<"process to be removed :: "<<(*j)->getName();
-            segmentsListWidget=currentProcess->getSegmentsListWidget();
-            int k=0;
-            for (std::list<Segment *>::iterator i=(*j)->getSegmentsList()->begin();i!=(*j)->getSegmentsList()->end();i++){
-                (*i)->deallocate();
-                segmentsListWidget->setItemHidden(segmentsListWidget->item(k),true);
-                segmentsListWidget->removeItemWidget(segmentsListWidget->item(k));
-                delete (*i);
-                k++;
-            }
-            for (int i=0;i<processesListWidget->count();i++){
-                if(processesListWidget->item(i)->text()==currentProcess->getName()){
-//                    qDebug()<<"process label to be removed from list is "<<processesListWidget->item(i)->text();
-                    processesListWidget->setItemHidden(processesListWidget->item(i),true);
-                    processesListWidget->removeItemWidget(processesListWidget->item(i));
-                    break;
-                }
-            }
-
-            (*j)->getSegmentsList()->clear();
-            delete (*j);
-            processes->erase(j);
-
-            break;
-        }
-    }
-
-    currentProcess=*processes->begin();
-    processSelected(processesListWidget->item(0));
-}
-
 bool EntryUI::holeAllocated(Hole *allocatedHole)
 {
-    qDebug()<<"EntryUI:: new hole start address="<<allocatedHole->getStartAddress();
+//    qDebug()<<"EntryUI:: new hole start address="<<allocatedHole->getStartAddress();
     if (allocatedHole->getSize()<=0){
         currentHole=allocatedHole;
         std::list <Hole *>::iterator i=popHole();
@@ -359,10 +380,32 @@ std::list<Hole *> *EntryUI::getHoles()
     return holes;
 }
 
+void EntryUI::deallocateProcess()
+{
+    if(currentProcess==nullptr)
+        return;
+    for (std::list <Process *>::iterator j=processes->begin() ;j!=processes->end();j++){
+        if(currentProcess==(*j)){
+            for (std::list<Segment *>::iterator i=(*j)->getSegmentsList()->begin();i!=(*j)->getSegmentsList()->end();i++){
+                (*i)->deallocate();
+            }
+        }
+    }
+
+    if(memoryAllocator!=nullptr){
+        memoryAllocator->joinHoles();
+        memoryAllocator->drawGraph();
+    }
+}
+
 
 void EntryUI::createItems()
 {
     startButton=new QPushButton("Start Allocation");
+    deallocationButton=new QPushButton("Deallocate Process");
+    messageUser=new QMessageBox();
+    messageUser->setText("entry message");
+    messageUser->hide();
 
     memoryDisplayGroup=new QGroupBox("Memory",this);
     holesGroup=new QGroupBox("Holes",this);
@@ -404,9 +447,9 @@ void EntryUI::createItems()
 
     fittingMethod=new QComboBox(this);
     memorySizeInput=new QInputDialog();
-    memorySizeInput->setTextValue("Enter memory Size");
+    memorySizeInput->setLabelText("Enter Memory Size");
+    memorySizeInput->setTextValue("2000");
     memorySizeInput->show();
-
     memoryDisplayGroup->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred);
     processesListWidget->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Minimum);
 }
@@ -440,6 +483,9 @@ void EntryUI::keyPressEvent(QKeyEvent *event)
         }
         if (segmentsListWidget->hasFocus()){
             popSegment();
+            if (memoryAllocator!=nullptr){
+                memoryAllocator->drawGraph();
+            }
         }
     }
 
@@ -507,6 +553,7 @@ void EntryUI::setInitialDisplay()
     displayListLayout->addRow(processesListWidget,segmentsListWidget);
     displayListLayout->addRow(holesListWidget);
     displayListLayout->addRow(startButton);
+    displayListLayout->addRow(deallocationButton);
 
 
 }
@@ -535,6 +582,7 @@ void EntryUI::signalsHandler()
     connect(holesListWidget,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(holeSelected(QListWidgetItem*)));
     connect(segmentsListWidget,SIGNAL(itemClicked(QListWidgetItem*)),this,SLOT(segmentSelected(QListWidgetItem*)));
     connect(memorySizeInput,SIGNAL(textValueSelected(QString)),this,SLOT(setMemorySize(QString)));
+    connect(deallocationButton,SIGNAL(clicked()),this,SLOT(deallocateProcess()));
 }
 
 void EntryUI::addNewHole(QString holeName, int startingAddress, int size)

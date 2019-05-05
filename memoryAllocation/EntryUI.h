@@ -25,20 +25,21 @@ private slots:
     void addHole();
     void addProcess();
     void addSegment();
+    std::list <Hole *>::iterator popHole();
+    void popProcess();
+    void popSegment();
     void buttonClicked(ControlButtons * sourceButton);
     void startAllocation();
     void processSelected(QListWidgetItem* selectedProcess);
     void holeSelected(QListWidgetItem* selectedHole);
     void segmentSelected(QListWidgetItem* selectedSegment);
-    void popSegment();
     void setMemorySize(QString sizeText);
-    std::list <Hole *>::iterator popHole();
-    void popProcess();
     bool holeAllocated(Hole * allocatedHole);
     void segmentDeallocated(Segment * deallocatedSegment);
     void removeHoleFromListWidget(QString holeName);
     std::list <Process *> * getProcesses();
     std::list <Hole *> * getHoles();
+    void deallocateProcess();
 private:
     void createItems();
     void keyPressEvent (QKeyEvent * event);
@@ -53,6 +54,7 @@ private:
     int memorySize;
     Allocator * memoryAllocator;
     QPushButton * startButton;
+    QPushButton * deallocationButton;
     QGroupBox * memoryDisplayGroup,*holesGroup,*processGroup,*segmentsGroup, *listingGroup;
     QLineEdit ** holesInput , **processInput;     //holesStart & size |||| process name , numSegments , sizeOfSegment , segmenName
     QComboBox * fittingMethod;
@@ -74,6 +76,7 @@ private:
     int enteredSegments;
     int holeID;
     QString allocationMethod;
+    QMessageBox * messageUser;
 
 };
 

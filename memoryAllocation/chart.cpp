@@ -101,13 +101,11 @@ void Chart::drawHoles()
 void Chart::drawSegments()
 {
 
-//    std::list<Segment*>::iterator j=segments->begin();
-//    j++;
     for(std::list<Segment*>::iterator i=segments->begin();i!=segments->end();i++){
        if((*i)->isAllocated()){
             int endAddress=(*i)->getSize()+(*i)->getResidingAddress()-1;
             for (std::vector<int *>::iterator k=freeBlocks->begin() ; k!=freeBlocks->end();k++){
-                qDebug()<<"free block size is "<<freeBlocks->size();
+                qDebug()<<"freeBlocks size is "<<freeBlocks->size();
                 qDebug()<<"in an allocated segment , x[0] and x[1] are "<<(*k)[0]<<(*k)[1]<<"while residing and end addresses are"<<(*i)->getResidingAddress()<<endAddress;
                 if (((*k)[1] >= (*i)->getResidingAddress() && (*k)[1] <= endAddress)){
                     qDebug()<<"x[1] was"<<(*k)[1];
@@ -130,20 +128,12 @@ void Chart::drawSegments()
                     x[1]=(*i)->getResidingAddress()-1;
                     k=freeBlocks->insert(k,x);
                     k--;
-
-//                    int secondBlockEndAddress=(*k)[1];
-//                    (*k)[1]=(*i)->getResidingAddress()-1;           //change end of block 1
-//                    x=new int [2];                                  //create a new block (block 2)
-//                    x[0]=endAddress+1;
-//                    x[1]=secondBlockEndAddress;
-//                    std::vector<int *>::iterator z=k;
-//                    z++;
-//                    freeBlocks->insert(z,x);
-//                    qDebug()<<"x[0] now is"<<(*k)[0];
-//                    qDebug()<<"x[1] now is"<<(*k)[1];
                 }
             }
         }
+       else {
+           continue;
+       }
        prototypeBlock[0]=new MemoryBlock(nullptr,(*i));
        int y=(*i)->getResidingAddress() * yBlock;
        qDebug()<<"y="+QString::number(y);
