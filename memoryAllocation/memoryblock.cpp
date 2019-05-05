@@ -7,7 +7,7 @@ MemoryBlock::MemoryBlock(QGraphicsItem * parent,Hole * hole)
     this->setParentItem(parent);
     this->setRect(memoryX,10,widthOfBlock,80);
     addressLabel=new QGraphicsSimpleTextItem(this);
-    qDebug()<<"memoryBlock 10 :: holeName "<<hole->getName();
+//    qDebug()<<"memoryBlock 10 :: holeName "<<hole->getName();
     blockName=new QGraphicsSimpleTextItem(hole->getName(),this);
     currentState=0;
     setSize(hole->getSize());
@@ -16,7 +16,7 @@ MemoryBlock::MemoryBlock(QGraphicsItem * parent,Hole * hole)
     this->setBrush(Qt::green);
     addressLabel->setBrush(Qt::red);
     blockName->setBrush(Qt::red);
-    qDebug()<<"memory bolck 0";
+//    qDebug()<<"memory bolck 0";
 }
 
 MemoryBlock::MemoryBlock(QGraphicsItem * parent,Segment * allocatedSegment){
@@ -29,7 +29,8 @@ MemoryBlock::MemoryBlock(QGraphicsItem * parent,Segment * allocatedSegment){
     this->setParentItem(parent);
     this->setRect(memoryX,10,widthOfBlock,80);
     addressLabel=new QGraphicsSimpleTextItem(QString::number(allocatedSegment->getResidingAddress()),this);
-    blockName=new QGraphicsSimpleTextItem(allocatedSegment->getName(),this);
+    blockName=new QGraphicsSimpleTextItem(this);
+    blockName->setText(allocatedSegment->getName());
     currentState=1;
     setSize(allocatedSegment->getSize());
     setStartAddress(allocatedSegment->getResidingAddress());
@@ -37,7 +38,7 @@ MemoryBlock::MemoryBlock(QGraphicsItem * parent,Segment * allocatedSegment){
     this->setBrush(Qt::red);
     addressLabel->setBrush(Qt::green);
     blockName->setBrush(Qt::green);
-    qDebug()<<"memory bolck 1";
+//    qDebug()<<"memory bolck 1";
 }
 
 MemoryBlock::MemoryBlock(QGraphicsItem *parent, int startAddress , int size)
@@ -58,7 +59,7 @@ MemoryBlock::MemoryBlock(QGraphicsItem *parent, int startAddress , int size)
 
 MemoryBlock::~MemoryBlock()
 {
-    qDebug()<<"deleting memory bolck";
+//    qDebug()<<"deleting memory bolck";
 }
 
 void MemoryBlock::setSize(int length){

@@ -48,6 +48,9 @@ void EntryUI::addHole()
     }
     QString holeName="Hole"+QString::number(holeID)+"       "+holesInput[0]->text()+" : "+QString::number( holesInput[0]->text().toInt()+holesInput[1]->text().toInt()-1);
     addNewHole(holeName,holesInput[0]->text().toInt(),holesInput[1]->text().toInt());
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->drawGraph();
+    }
 }
 
 
@@ -224,6 +227,9 @@ void EntryUI::popSegment()
             currentSegment=nullptr;
             break;
         }
+    }
+    if (memoryAllocator!=nullptr){
+        memoryAllocator->drawGraph();
     }
 }
 
@@ -538,8 +544,4 @@ void EntryUI::addNewHole(QString holeName, int startingAddress, int size)
     holes->push_back(newHole);
     holesListWidget->addItem(holeName);
     holeID++;
-    if (memoryAllocator!=nullptr){
-        memoryAllocator->drawGraph();
-    }
-
 }

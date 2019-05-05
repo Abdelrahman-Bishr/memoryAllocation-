@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     entry=new EntryUI();
     this->setCentralWidget(entry);
     this->setWindowTitle("Memory Allocation Simulator");
+//    this->setGeometry(120,90,1200,900);
+    this->setWindowState(Qt::WindowState::WindowMaximized);
 //    this->hide();
 }
 
