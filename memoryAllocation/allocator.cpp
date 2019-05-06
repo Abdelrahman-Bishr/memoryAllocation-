@@ -129,6 +129,7 @@ void Allocator::joinHoles()
 
             if(emit holeAllocated(*j)){
                 j--;
+                i--;
             }
         }
         j++;

@@ -448,8 +448,10 @@ void EntryUI::createItems()
     fittingMethod=new QComboBox(this);
     memorySizeInput=new QInputDialog();
     memorySizeInput->setLabelText("Enter Memory Size");
-    memorySizeInput->setTextValue("2000");
     memorySizeInput->show();
+    memorySizeInput->setInputMode(QInputDialog::IntInput);
+    memorySizeInput->setIntRange(1,999999999);
+    memorySizeInput->setIntValue(2000);
     memoryDisplayGroup->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred);
     processesListWidget->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Minimum);
 }
