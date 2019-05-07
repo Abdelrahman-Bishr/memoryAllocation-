@@ -20,13 +20,16 @@ void Allocator::startAllocator(QString allocationMethod)
     joinHoles();
 
     if (allocationMethod=="First Fit"){
-        firstFit();
+//        firstFit();
+        firstFitProcess();
     }
     else if (allocationMethod=="Best Fit"){
-        bestFit();
+//        bestFit();
+        bestFitProcess();
     }
     else if (allocationMethod=="Worst Fit"){
-        worstFit();
+//        worstFit();
+        worstFitProcess();
     }
 
     drawGraph();
@@ -106,6 +109,111 @@ void Allocator::worstFit(){
             messageUser->show();
         }
 }
+
+
+
+void Allocator::firstFitProcess()
+{
+    processes->sort(earlyEnteredProcess);
+    holes->sort(holeStart);
+    QString alloc="";
+    for (std::list <Process *>::iterator k=processes->begin(); k!=processes->end(); k++){
+        (*k)->getSegmentsList()->sort(earlyEnteredSegment);
+
+        for (std::list <Segment *>::iterator j=(*k)->getSegmentsList()->begin() ; j!= (*k)->getSegmentsList()->end() ; j++){
+            if ((*j)->isAllocated())
+                continue;
+            for (std::list<Hole * >::iterator i=holes->begin(); i!=holes->end();i++){
+                if ((*i)->getSize()>=(*j)->getSize()){
+                    (*i)->allocate((*j));
+                    emit holeAllocated((*i));
+                    break;
+                }
+            }
+        }
+        if (!(*k)->isAllocated()){
+            emit deallocateProcess(*k);
+            alloc+=(*k)->getName()+"\t  wasn't allocated , no room for it \n";
+        }
+    }
+    if(alloc!=""){
+        messageUser->setText(alloc);
+        messageUser->show();
+    }
+
+}
+
+
+
+void Allocator::bestFitProcess()
+{
+    processes->sort(largerProcess);
+    holes->sort(largerHole);
+    QString alloc;
+    for (std::list <Process *>::iterator k=processes->begin(); k!=processes->end(); k++){
+        (*k)->getSegmentsList()->sort(largerSegment);
+
+        for (std::list <Segment *>::reverse_iterator j=(*k)->getSegmentsList()->rbegin() ; j!= (*k)->getSegmentsList()->rend() ; j++){
+            if ((*j)->isAllocated())
+                continue;
+            for (std::list<Hole * >::iterator i=holes->begin(); i!=holes->end();i++){
+                if ((*i)->getSize()>=(*j)->getSize()){
+                    (*i)->allocate((*j));
+                    emit holeAllocated((*i));
+                    break;
+                }
+            }
+        }
+        if (!(*k)->isAllocated()){
+            emit deallocateProcess(*k);
+            alloc+=(*k)->getName()+"\t  wasn't allocated , no room for it \n";
+        }
+    }
+    if(alloc!=""){
+        messageUser->setText(alloc);
+        messageUser->show();
+    }
+
+
+}
+
+
+
+
+void Allocator::worstFitProcess()
+{
+
+    processes->sort(largerProcess);
+    holes->sort(largerHole);
+    QString alloc;
+    for (std::list <Process *>::reverse_iterator k=processes->rbegin(); k!=processes->rend(); k++){
+        (*k)->getSegmentsList()->sort(largerSegment);
+
+        for (std::list <Segment *>::iterator j=(*k)->getSegmentsList()->begin() ; j!= (*k)->getSegmentsList()->end() ; j++){
+            if ((*j)->isAllocated())
+                continue;
+            for (std::list<Hole * >::reverse_iterator i=holes->rbegin(); i!=holes->rend();i++){
+                if ((*i)->getSize()>=(*j)->getSize()){
+                    (*i)->allocate((*j));
+                    emit holeAllocated((*i));
+                    break;
+                }
+            }
+        }
+        if (!(*k)->isAllocated()){
+            emit deallocateProcess(*k);
+            alloc+=(*k)->getName()+"\t  wasn't allocated , no room for it \n";
+        }
+    }
+    if(alloc!=""){
+        messageUser->setText(alloc);
+        messageUser->show();
+    }
+
+}
+
+
+
 
 void Allocator::joinHoles()
 {

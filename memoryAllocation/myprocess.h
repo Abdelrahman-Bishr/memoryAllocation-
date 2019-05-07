@@ -19,6 +19,9 @@ public:
     void setNewSegment(QString name,int size);
     void addSegment();
     std::list<Segment *> *getSegmentsList();
+    int getSize();
+    bool isAllocated();
+    int getID();
 
 signals:
     void deallocated(Segment * deallocatedSegment);

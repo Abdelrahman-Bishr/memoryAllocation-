@@ -37,6 +37,7 @@ private slots:
     bool holeAllocated(Hole * allocatedHole);
     void segmentDeallocated(Segment * deallocatedSegment);
     void removeHoleFromListWidget(QString holeName);
+    void deallocateProcess(Process * processToDeallocate);
     std::list <Process *> * getProcesses();
     std::list <Hole *> * getHoles();
     void deallocateProcess();

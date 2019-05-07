@@ -1,11 +1,12 @@
 #include "segment.h"
 
-Segment::Segment(QString segName, int segSize)
+Segment::Segment(QString segName, int segSize , int segmentID)
 {
     name=segName;
     size=segSize;
     allocated=false;
     residingAddress=-1;
+    id=segmentID;
 }
 
 QString Segment::getName()
@@ -50,4 +51,9 @@ void Segment::deallocate()
 bool Segment::isAllocated()
 {
     return allocated;
+}
+
+int Segment::getID()
+{
+    return id;
 }

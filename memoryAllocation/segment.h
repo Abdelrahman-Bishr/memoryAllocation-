@@ -7,7 +7,7 @@ class Segment : public QObject
 {
     Q_OBJECT
 public:
-    Segment(QString segName, int segSize);
+    Segment(QString segName, int segSize, int segmentID);
     QString getName();
     int getSize();
     int getResidingAddress();
@@ -16,7 +16,7 @@ public:
     void allocate();
     void deallocate();
     bool isAllocated();
-
+    int getID();
 signals:
     void deallocated (Segment * deallocatedSegment);
 private:
@@ -24,6 +24,7 @@ private:
     int size;
     int residingAddress;
     bool allocated;
+    int id;
 };
 
 #endif // SEGMENT_H

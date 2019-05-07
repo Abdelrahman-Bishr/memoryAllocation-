@@ -23,6 +23,9 @@ public:
     void firstFit();
     void bestFit();
     void worstFit();
+    void firstFitProcess();
+    void bestFitProcess();
+    void worstFitProcess();
     void joinHoles();
     void setChartWidget (QVBoxLayout * memoryGroupBoxLayout);
     void drawGraph();
@@ -33,6 +36,21 @@ public:
     }
     static bool holeStart(Hole * hole1 , Hole * hole2 ){
         if (hole1->getStartAddress()<hole2->getStartAddress())
+            return true;
+        return false;
+    }
+    static bool largerProcess(Process * process1 , Process * process2 ){
+        if (process1->getSize()<process2->getSize())
+            return true;
+        return false;
+    }
+    static bool earlyEnteredProcess(Process * process1 , Process * process2 ){
+        if (process1->getID()<process2->getID())
+            return true;
+        return false;
+    }
+    static bool earlyEnteredSegment(Segment * segment1 , Segment * segment2){
+        if (segment1->getID()<segment2->getID())
             return true;
         return false;
     }
@@ -52,6 +70,7 @@ public:
 signals:
     bool holeAllocated(Hole * allocatedHole);
     void holeEaten(QString holeName);
+    void deallocateProcess(Process * processToDeallocate);
     std::list <Hole *>  *setHoles();
     std::list <Process *> *setProcesses();
 private:

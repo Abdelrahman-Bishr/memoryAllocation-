@@ -273,6 +273,7 @@ void EntryUI::startAllocation()
     connect(memoryAllocator,SIGNAL(holeEaten(QString)),this,SLOT(removeHoleFromListWidget(QString)));
     connect(memoryAllocator,SIGNAL(setHoles()),this,SLOT(getHoles()));
     connect(memoryAllocator,SIGNAL(setProcesses()),this,SLOT(getProcesses()));
+    connect(memoryAllocator,SIGNAL(deallocateProcess(Process *)),this,SLOT(deallocateProcess(Process *)));
     allocationMethod=fittingMethod->currentText();
     memoryAllocator->startAllocator(allocationMethod);
 
@@ -368,6 +369,12 @@ void EntryUI::removeHoleFromListWidget(QString holeName)
             return;
         }
     }
+}
+
+void EntryUI::deallocateProcess(Process *processToDeallocate)
+{
+    currentProcess=processToDeallocate;
+    deallocateProcess();
 }
 
 std::list<Process *> *EntryUI::getProcesses()

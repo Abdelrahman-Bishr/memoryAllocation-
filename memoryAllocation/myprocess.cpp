@@ -69,7 +69,7 @@ void Process::setNewSegment(QString name, int size)
 
 void Process::addSegment()
 {
-    newSeg=new Segment (this->name+"::"+newSegmentName,newSegmentSize);
+    newSeg=new Segment (this->name+"::"+newSegmentName,newSegmentSize,getNumberOfEnteredSegments()+1);
     segments->push_back(newSeg);
     segsListWidget->addItem(newSeg->getName());
     connect(newSeg,SIGNAL(deallocated(Segment*)),this,SLOT(segmentDeallocated(Segment*)));
@@ -78,6 +78,29 @@ void Process::addSegment()
 std::list<Segment *> *Process::getSegmentsList()
 {
     return  segments;
+}
+
+int Process::getSize()
+{
+    int size=0;
+    for (std::list <Segment *>::iterator i=segments->begin(); i!=segments->end(); i++){
+        size+=(*i)->getSize();
+    }
+    return size;
+}
+
+bool Process::isAllocated()
+{
+    for (std::list <Segment *>::iterator i=segments->begin(); i!=segments->end(); i++){
+        if(!(*i)->isAllocated())
+            return false;
+    }
+    return true;
+}
+
+int Process::getID()
+{
+    return id;
 }
 
 void Process::segmentDeallocated(Segment *deallocatedSegment)
