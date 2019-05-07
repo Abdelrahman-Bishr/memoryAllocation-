@@ -15,7 +15,7 @@ TEMPLATE = app
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+#DEFINES += QT_DEPRECATED_WARNINGS
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -29,23 +29,23 @@ SOURCES += \
         mainwindow.cpp \
     EntryUI.cpp \
     controlbuttons.cpp \
-    process.cpp \
     hole.cpp \
     segment.cpp \
     allocator.cpp \
     chart.cpp \
-    memoryblock.cpp
+    memoryblock.cpp \
+    myprocess.cpp
 
 HEADERS += \
         mainwindow.h \
     EntryUI.h \
     controlbuttons.h \
-    process.h \
     hole.h \
     segment.h \
     allocator.h \
     chart.h \
-    memoryblock.h
+    memoryblock.h \
+    myprocess.h
 
 FORMS += \
         mainwindow.ui

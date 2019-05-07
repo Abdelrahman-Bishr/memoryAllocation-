@@ -1,7 +1,7 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
 #include "hole.h"
-#include "process.h"
+#include "myprocess.h"
 #include "segment.h"
 #include "chart.h"
 #include <bits/stdc++.h>

@@ -60,8 +60,10 @@ void Allocator::firstFit(){
             alloc+=(*j)->getName()+" wasn't allocated , no room for it \n";
             }
     }
-    messageUser->setText(alloc);
-    messageUser->show();
+    if(alloc!=""){
+        messageUser->setText(alloc);
+        messageUser->show();
+    }
 }
 
 
@@ -98,9 +100,11 @@ void Allocator::worstFit(){
                 alloc+=(*j)->getName()+" wasn't allocated , no room for it \n";
                 }
         }
-        messageUser->setText(alloc);
-        messageUser->show();
 
+        if(alloc!=""){
+            messageUser->setText(alloc);
+            messageUser->show();
+        }
 }
 
 void Allocator::joinHoles()
@@ -203,6 +207,9 @@ void Allocator::bestFit(){
             }
     }
 
-    messageUser->setText(alloc);
-    messageUser->show();
+
+    if(alloc!=""){
+        messageUser->setText(alloc);
+        messageUser->show();
+    }
 }

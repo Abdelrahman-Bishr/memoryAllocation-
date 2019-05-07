@@ -1,4 +1,4 @@
-#include "process.h"
+#include "myprocess.h"
 
 Process::Process(QString name, int id, int segments)
 {
